@@ -1,0 +1,493 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ariel Feider — Software Development & Cyber Security</title>
+<meta name="description" content="Ariel Feider — final-year Computer Science student. Software development and offensive cyber security.">
+<meta property="og:title" content="Ariel Feider — Software & Cyber Security">
+<meta property="og:description" content="Final-year B.Sc. Computer Science student focused on offensive security and secure development.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Orbitron:wght@500;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#05070d;
+    --panel:rgba(12,18,32,.72);
+    --line:rgba(0,255,200,.18);
+    --cyan:#00ffd0;
+    --magenta:#ff2e88;
+    --violet:#8b5cf6;
+    --text:#d7e3f4;
+    --muted:#7d8ca8;
+    --mono:'JetBrains Mono',ui-monospace,monospace;
+    --display:'Orbitron',sans-serif;
+    --sans:'Inter',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{
+    background:var(--bg);color:var(--text);font-family:var(--sans);line-height:1.6;
+    min-height:100vh;overflow-x:hidden;
+  }
+  /* animated grid floor */
+  .grid-bg{
+    position:fixed;inset:0;z-index:-2;
+    background-image:
+      linear-gradient(var(--line) 1px,transparent 1px),
+      linear-gradient(90deg,var(--line) 1px,transparent 1px);
+    background-size:48px 48px;
+    mask-image:radial-gradient(ellipse at 50% 30%,#000 20%,transparent 75%);
+    animation:drift 30s linear infinite;
+  }
+  @keyframes drift{to{background-position:0 480px,480px 0}}
+  .glow{position:fixed;z-index:-1;border-radius:50%;filter:blur(120px);opacity:.35;pointer-events:none}
+  .glow.a{width:520px;height:520px;background:var(--violet);top:-160px;left:-160px}
+  .glow.b{width:420px;height:420px;background:var(--magenta);bottom:-140px;right:-120px;opacity:.22}
+  .scan{position:fixed;inset:0;z-index:50;pointer-events:none;
+    background:repeating-linear-gradient(0deg,rgba(255,255,255,.025) 0 1px,transparent 1px 3px)}
+  #matrix{position:fixed;inset:0;z-index:-1;opacity:.12}
+
+  .wrap{max-width:1080px;margin:0 auto;padding:56px 24px 80px}
+
+  /* top bar */
+  .bar{display:flex;justify-content:space-between;align-items:center;font-family:var(--mono);
+    font-size:12px;color:var(--muted);letter-spacing:.08em;margin-bottom:56px}
+  .bar .dot{display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--cyan);
+    box-shadow:0 0 12px var(--cyan);margin-right:8px;animation:pulse 1.6s infinite}
+  @keyframes pulse{50%{opacity:.3}}
+  .bar button{font:inherit;color:var(--cyan);background:none;border:1px solid var(--line);
+    padding:6px 12px;border-radius:4px;cursor:pointer;transition:.2s}
+  .bar button:hover{background:rgba(0,255,208,.08);box-shadow:0 0 16px rgba(0,255,208,.25)}
+
+  /* hero */
+  header{margin-bottom:64px}
+  .tag{font-family:var(--mono);color:var(--cyan);font-size:13px;letter-spacing:.2em;margin-bottom:14px}
+  h1{font-family:var(--display);font-weight:800;font-size:clamp(44px,8vw,88px);line-height:1;
+    letter-spacing:.02em;position:relative;display:inline-block}
+  h1 .glitch{position:relative}
+  h1 .glitch::before,h1 .glitch::after{content:attr(data-text);position:absolute;inset:0;overflow:hidden}
+  h1 .glitch::before{color:var(--magenta);transform:translate(2px,0);clip-path:inset(0 0 60% 0);animation:g1 3.5s infinite steps(1)}
+  h1 .glitch::after{color:var(--cyan);transform:translate(-2px,0);clip-path:inset(55% 0 0 0);animation:g2 3.5s infinite steps(1)}
+  @keyframes g1{0%,92%,100%{transform:none;opacity:0}93%{transform:translate(4px,-2px);opacity:1}96%{transform:translate(-3px,1px);opacity:1}}
+  @keyframes g2{0%,90%,100%{transform:none;opacity:0}91%{transform:translate(-4px,2px);opacity:1}95%{transform:translate(3px,-1px);opacity:1}}
+  .roles{list-style:none;margin-top:26px;display:flex;flex-direction:column;gap:6px}
+  .roles li{font-family:var(--display);font-weight:500;font-size:clamp(20px,3.4vw,34px);line-height:1.25;
+    letter-spacing:.03em;display:flex;align-items:baseline;gap:16px;
+    background:linear-gradient(90deg,#fff 0%,var(--cyan) 60%,var(--violet) 100%);
+    -webkit-background-clip:text;background-clip:text;color:transparent;
+    opacity:0;transform:translateX(-14px);animation:roleIn .6s ease forwards}
+  .roles li:nth-child(1){animation-delay:.15s}.roles li:nth-child(2){animation-delay:.3s}
+  .roles li:nth-child(3){animation-delay:.45s}.roles li:nth-child(4){animation-delay:.6s}
+  .roles li:nth-child(5){animation-delay:.75s}
+  @keyframes roleIn{to{opacity:1;transform:none}}
+  .roles .idx{font-family:var(--mono);font-size:13px;color:var(--magenta);-webkit-text-fill-color:var(--magenta);letter-spacing:.1em}
+  .roles .cursor{display:inline-block;width:12px;height:.9em;background:var(--cyan);margin-left:6px;align-self:center;animation:pulse 1s steps(1) infinite}
+
+  /* about */
+  .about p+p{margin-top:14px}
+  .about .hl{color:var(--cyan)}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:20px}
+  .stat{border:1px solid var(--line);border-radius:6px;padding:12px;text-align:center}
+  .stat b{display:block;font-family:var(--display);font-size:26px;color:var(--cyan);font-weight:800}
+  .stat span{font-family:var(--mono);font-size:11px;color:var(--muted);letter-spacing:.1em}
+  @media(max-width:620px){.stats{grid-template-columns:repeat(2,1fr)}}
+
+  /* project cards */
+  .projects{margin-top:24px}
+  .proj ul{margin:12px 0 0 0;list-style:none}
+  .proj li{position:relative;padding-left:22px;margin-top:7px}
+  .proj li::before{content:"▸";position:absolute;left:4px;color:var(--cyan)}
+  .hl2{color:var(--cyan)}
+  .proj .sub{font-family:var(--mono);font-size:11.5px;letter-spacing:.14em;color:var(--muted);margin-top:16px}
+  .contacts{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+  .chip{font-family:var(--mono);font-size:13px;color:var(--text);text-decoration:none;
+    border:1px solid var(--line);background:var(--panel);padding:9px 14px;border-radius:6px;
+    display:inline-flex;align-items:center;gap:8px;transition:.2s;backdrop-filter:blur(6px)}
+  .chip:hover{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 18px rgba(0,255,208,.2)}
+  .chip svg{width:15px;height:15px;stroke:currentColor;fill:none;stroke-width:2}
+
+  /* layout */
+  .grid{display:grid;grid-template-columns:320px 1fr;gap:24px}
+  @media(max-width:860px){.grid{grid-template-columns:1fr}}
+  .col{display:flex;flex-direction:column;gap:24px}
+
+  .panel{position:relative;background:var(--panel);border:1px solid var(--line);border-radius:10px;
+    padding:26px;backdrop-filter:blur(10px);
+    opacity:0;transform:translateY(18px);transition:opacity .7s ease,transform .7s ease}
+  .panel.in{opacity:1;transform:none}
+  .panel::before,.panel::after{content:"";position:absolute;width:14px;height:14px;border:2px solid var(--cyan)}
+  .panel::before{top:-1px;left:-1px;border-right:0;border-bottom:0;border-top-left-radius:10px}
+  .panel::after{bottom:-1px;right:-1px;border-left:0;border-top:0;border-bottom-right-radius:10px}
+  h2{font-family:var(--mono);font-size:13px;font-weight:600;letter-spacing:.22em;color:var(--cyan);
+    text-transform:uppercase;margin-bottom:18px;display:flex;align-items:center;gap:10px}
+  h2 .n{color:var(--magenta)}
+  h2::after{content:"";flex:1;height:1px;background:linear-gradient(90deg,var(--line),transparent)}
+
+  p{color:var(--text)}
+  .muted{color:var(--muted)}
+
+  /* skills */
+  .skillgroup{margin-bottom:20px}
+  .skillgroup:last-child{margin-bottom:0}
+  .skillgroup h3{font-size:12px;font-family:var(--mono);color:var(--muted);letter-spacing:.12em;margin-bottom:10px;font-weight:400}
+  .pills{display:flex;flex-wrap:wrap;gap:8px}
+  .pill{font-family:var(--mono);font-size:12.5px;padding:5px 10px;border-radius:4px;
+    border:1px solid rgba(139,92,246,.4);background:rgba(139,92,246,.1);color:#e3d9ff}
+  .pill.c{border-color:rgba(0,255,208,.35);background:rgba(0,255,208,.07);color:#c8fff3}
+
+  /* education */
+  .edu .school{font-weight:600;font-size:17px}
+  .edu .deg{margin-top:4px}
+  .edu .when{font-family:var(--mono);font-size:12.5px;color:var(--muted);margin-top:6px}
+  .progress{margin-top:16px}
+  .progress .lbl{display:flex;justify-content:space-between;font-family:var(--mono);font-size:11.5px;color:var(--muted);margin-bottom:6px}
+  .progress .track{height:6px;background:rgba(255,255,255,.06);border-radius:3px;overflow:hidden}
+  .progress .fill{height:100%;width:0;background:linear-gradient(90deg,var(--violet),var(--cyan));
+    box-shadow:0 0 12px var(--cyan);transition:width 1.6s cubic-bezier(.2,.8,.2,1)}
+  .courses{margin-top:14px;display:flex;flex-direction:column;gap:8px;font-size:14px}
+  .course{display:flex;gap:10px;align-items:baseline}
+  .course em{font-style:normal;font-family:var(--mono);font-size:11px;color:var(--muted);margin-left:auto;white-space:nowrap;padding-left:8px}
+  .cs{font-family:var(--mono);font-size:12px}
+  .cs.done{color:var(--cyan)}.cs.live{color:var(--magenta);animation:pulse 1.4s infinite}
+  .badge{display:inline-block;margin-top:12px;font-family:var(--mono);font-size:11px;letter-spacing:.14em;
+    color:var(--bg);background:var(--cyan);padding:3px 8px;border-radius:3px}
+
+  /* languages */
+  .lang{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px dashed var(--line)}
+  .lang:last-child{border-bottom:0}
+  .lang span:last-child{font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+  /* projects */
+  .proj{padding:20px 0;border-bottom:1px solid var(--line)}
+  .proj:first-of-type{padding-top:0}
+  .proj:last-child{border-bottom:0;padding-bottom:0}
+  .print-only{display:none}
+  .proj-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+  .proj h3{font-family:var(--display);font-size:18px;font-weight:500;letter-spacing:.03em}
+  .status{font-family:var(--mono);font-size:11px;letter-spacing:.12em;padding:3px 8px;border-radius:3px;border:1px solid}
+  .status.done{color:var(--magenta);border-color:rgba(255,46,136,.45)}
+  .status.live{color:var(--cyan);border-color:rgba(0,255,208,.45)}
+  .proj p{margin-top:10px}
+  .proj .pills{margin-top:12px}
+
+  /* terminal objective */
+  .term{font-family:var(--mono);font-size:14px}
+  .term .prompt{color:var(--cyan)}
+  .term .out{margin-top:10px;font-family:var(--sans);font-size:15.5px}
+
+  footer{margin-top:56px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--muted)}
+  footer a{color:var(--cyan);text-decoration:none}
+
+  @media (prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .panel,.roles li{opacity:1;transform:none}
+  }
+
+  /* print / save as PDF: clean light version */
+  @media print{
+    @page{margin:14mm}
+    body{background:#fff;color:#111}
+    .grid-bg,.glow,.scan,#matrix,.bar,footer,h1 .glitch::before,h1 .glitch::after,.roles .cursor{display:none!important}
+    .wrap{padding:0}
+    header{margin-bottom:18px}
+    h1{font-size:34px;color:#111}
+    .tag,h2{color:#0a7d6b}
+    .role,.chip,p,.pill,.pill.c{color:#111}
+    .chip,.panel{background:none;border:1px solid #ccc;backdrop-filter:none;box-shadow:none}
+    .panel{opacity:1;transform:none;padding:12px;break-inside:auto}
+    .lang{padding:3px 0}
+    .about p+p{margin-top:8px}
+    .stats{margin-top:10px}
+    .panel::before,.panel::after{display:none}
+    .grid{grid-template-columns:240px 1fr;gap:12px}
+    .col{gap:12px}
+    .pill,.pill.c{background:none;border-color:#bbb}
+    .muted,.edu .when,.lang span:last-child{color:#555}
+    .progress .fill{box-shadow:none}
+    .contacts{margin-top:12px}
+    .roles{flex-direction:row;flex-wrap:wrap;gap:4px 14px;margin-top:8px}
+    .roles li{font-size:13px;color:#0a7d6b;background:none;-webkit-text-fill-color:#0a7d6b;opacity:1;transform:none;gap:6px}
+    .roles .idx{display:none}
+    .stat b{color:#0a7d6b;font-size:18px}
+    .stat{padding:6px}
+    .about .hl{color:#0a7d6b}
+    .proj li{margin-top:3px}
+    .hl2{color:var(--cyan)}
+  .proj .sub{margin-top:8px}
+    .projects{margin-top:12px;break-inside:auto}
+    .proj{break-inside:avoid}
+    .proj li{font-size:11.5px}
+    footer{display:block!important;margin-top:16px;color:#555}
+    footer a{color:#0a7d6b}
+    body{font-size:12px;line-height:1.45}
+    .progress{display:none}
+    .proj{padding:10px 0}
+    .proj p,.term .out{font-size:12px}
+    h2{margin-bottom:10px}
+    .skillgroup{margin-bottom:10px}
+    .pill{font-size:10.5px;padding:3px 7px}
+    .chip{font-size:11px;padding:5px 9px}
+  }
+</style>
+</head>
+<body>
+<canvas id="matrix" aria-hidden="true"></canvas>
+<div class="grid-bg" aria-hidden="true"></div>
+<div class="glow a" aria-hidden="true"></div>
+<div class="glow b" aria-hidden="true"></div>
+<div class="scan" aria-hidden="true"></div>
+
+<div class="wrap">
+  <div class="bar">
+    <span><span class="dot"></span>SYS://FEIDER.PROFILE — ONLINE</span>
+    <button onclick="window.print()">↓ SAVE AS PDF</button>
+  </div>
+
+  <header>
+    <div class="tag">&gt; IDENTITY_VERIFIED</div>
+    <h1><span class="glitch" data-text="ARIEL FEIDER">ARIEL FEIDER</span></h1>
+    <ul class="roles">
+      <li><span class="idx">01</span>Security-Focused Developer</li>
+      <li><span class="idx">02</span>Penetration Tester</li>
+      <li><span class="idx">03</span>Offensive &amp; Defensive Security</li>
+      <li><span class="idx">04</span>Secure Programming</li>
+      <li><span class="idx">05</span>Reverse Engineering<span class="cursor"></span></li>
+    </ul>
+
+    <div class="contacts">
+      <a class="chip" href="mailto:arik.feider@gmail.com">
+        <svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="m3 7 9 6 9-6"/></svg>
+        arik.feider@gmail.com
+      </a>
+      <a class="chip" id="gh-link" href="https://github.com/PythonIK01" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.9a3.4 3.4 0 0 0-.9-2.6c3.1-.4 6.4-1.5 6.4-7A5.4 5.4 0 0 0 20 4.8 5 5 0 0 0 19.9 1S18.7.7 16 2.5a13.4 13.4 0 0 0-7 0C6.3.7 5.1 1 5.1 1A5 5 0 0 0 5 4.8a5.4 5.4 0 0 0-1.5 3.7c0 5.4 3.3 6.6 6.4 7a3.4 3.4 0 0 0-.9 2.6V22"/></svg>
+        github.com/PythonIK01
+      </a>
+    </div>
+  </header>
+
+  <div class="grid">
+    <!-- LEFT COLUMN -->
+    <div class="col">
+      <section class="panel edu">
+        <h2><span class="n">01</span>Education</h2>
+        <div class="school">Netanya Academic College</div>
+        <div class="deg">B.Sc. Computer Science</div>
+        <div class="when">11/2022 — Present · 5th year</div>
+        <p class="muted" style="margin-top:10px;font-size:14px">Started the degree at age 14.</p>
+        <div class="courses">
+          <div class="course"><span class="cs done">✓</span>Advanced Secure Programming <em>completed</em></div>
+          <div class="course"><span class="cs live">●</span>Cyber security course <em>in progress</em></div>
+        </div>
+        <span class="badge">FINAL YEAR</span>
+      </section>
+
+      <section class="panel">
+        <h2><span class="n">02</span>Skills</h2>
+        <div class="skillgroup">
+          <h3>// LANGUAGES</h3>
+          <div class="pills">
+            <span class="pill">C#</span><span class="pill">Java</span><span class="pill">Python</span>
+            <span class="pill">C</span><span class="pill">Bash</span><span class="pill">HTML</span>
+          </div>
+        </div>
+        <div class="skillgroup">
+          <h3>// TOOLS &amp; PLATFORMS</h3>
+          <div class="pills">
+            <span class="pill c">Kali Linux</span><span class="pill c">Wireshark</span>
+            <span class="pill c">Linux terminal</span><span class="pill c">CMD</span>
+            <span class="pill c">PowerShell</span><span class="pill c">.NET MAUI</span>
+            <span class="pill c">Visual Studio</span><span class="pill c">VS Code</span>
+            <span class="pill c">PyCharm</span><span class="pill c">Virtual machines</span>
+          </div>
+        </div>
+        <div class="skillgroup">
+          <h3>// AI</h3>
+          <div class="pills">
+            <span class="pill c">AI agents</span><span class="pill c">LLM integration</span>
+            <span class="pill c">AI-assisted automation</span>
+          </div>
+        </div>
+        <div class="skillgroup">
+          <h3>// CTF PLATFORMS</h3>
+          <div class="pills">
+            <span class="pill">Hack The Box</span><span class="pill">TryHackMe</span><span class="pill">CTF 24/7</span>
+          </div>
+        </div>
+        <div class="skillgroup">
+          <h3>// FOCUS AREAS</h3>
+          <div class="pills">
+            <span class="pill">Penetration testing</span><span class="pill">Vulnerability research</span>
+            <span class="pill">Malware analysis</span><span class="pill">Reverse engineering</span>
+            <span class="pill">Secure programming</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="panel">
+        <h2><span class="n">03</span>Languages</h2>
+        <div class="lang"><span>Hebrew</span><span>NATIVE</span></div>
+        <div class="lang"><span>English</span><span>FLUENT</span></div>
+        <div class="lang"><span>Russian</span><span>CONVERSATIONAL</span></div>
+      </section>
+    </div>
+
+    <!-- RIGHT COLUMN -->
+    <div class="col">
+      <section class="panel term about">
+        <h2><span class="n">04</span>About Me</h2>
+        <div><span class="prompt">ariel@feider:~$</span> cat about.txt</div>
+        <div class="out">
+          <p>Security has been part of my life since I was about <span class="hl">13 years old</span>. My father and I
+            got into it together: setting up machines, breaking things, figuring out how they worked and how to protect
+            them. What started as a shared hobby at home became a real passion, and it's the reason I started my
+            Computer Science degree at just <span class="hl">14</span>.</p>
+          <p>That same year, at <span class="hl">14</span>, I also started competing in <span class="hl">Capture The Flag (CTF)</span>
+            challenges, and I've done a lot of them since on platforms like Hack The Box, TryHackMe and CTF 24/7. CTFs are
+            where I sharpened my practical skills in exploitation, reverse engineering, cryptography and web security.</p>
+          <p>Today I'm a final-year CS student and a developer who focuses on security. I'm drawn to offensive security
+            and secure system exploitation, and I balance that with the defensive side: understanding attacks well enough
+            to stop them. I have hands-on experience in penetration testing, vulnerability research, reverse engineering
+            and secure programming. I also work with AI: most of my projects include parts that are run by AI agents.</p>
+          <p>I'm motivated by strengthening the IDF's digital and defensive capabilities. I thrive on complex,
+            high-stakes technical challenges and aim to contribute to that mission with precision, responsibility and a
+            strong technical foundation.</p>
+        </div>
+        <div class="stats">
+          <div class="stat"><b>13</b><span>AGE I STARTED IN SECURITY</span></div>
+          <div class="stat"><b>14</b><span>STARTED MY DEGREE &amp; CTFs</span></div>
+          <div class="stat"><b>18</b><span>CURRENT AGE</span></div>
+          <div class="stat"><b>5th</b><span>YEAR · FINAL YEAR</span></div>
+        </div>
+      </section>
+
+    </div>
+  </div>
+
+  <!-- PROJECTS: full width -->
+  <section class="panel projects">
+    <h2><span class="n">05</span>Projects</h2>
+
+    <article class="proj">
+      <div class="proj-head">
+        <h3>Ransomware Simulation &amp; Analysis</h3>
+        <span class="status done">COMPLETED</span>
+      </div>
+      <p>I designed and built a ransomware simulation from scratch and ran it only inside an isolated, controlled
+        virtual-machine environment. The goal was to understand ransomware from the attacker's side, step by step,
+        so I could understand how to detect it, contain it and recover from it.</p>
+      <div class="sub">// WHAT I DID</div>
+      <ul>
+        <li>Set up a sandboxed lab of virtual machines with no access to real networks or real data, so the
+          simulation could run safely and be reset at any time.</li>
+        <li>Implemented the core behavior: finding target files, encrypting them, and managing the encryption keys,
+          which gave me hands-on experience with how symmetric and asymmetric encryption work together in practice.</li>
+        <li>Watched the simulation run with security tools to see the traces it leaves behind: file activity,
+          process behavior and system changes that defenders can spot.</li>
+        <li>Documented defensive mitigations based on what I observed, including backups, early detection signals and
+          ways to limit how far an infection can spread.</li>
+      </ul>
+      <div class="pills">
+        <span class="pill c">Malware analysis</span><span class="pill c">Cryptography</span>
+        <span class="pill c">Virtualization</span><span class="pill c">Offensive security</span><span class="pill c">Defense</span>
+      </div>
+    </article>
+
+    <article class="proj">
+      <div class="proj-head">
+        <h3>Home Penetration Testing Lab</h3>
+        <span class="status live">ONGOING</span>
+      </div>
+      <p>I built and maintain a personal penetration testing lab where I practice the full process of an attack,
+        from reconnaissance to exploitation, against machines that are made to be vulnerable. It's my space to
+        learn new techniques, test tools and sharpen my skills on both the offensive and defensive side.</p>
+      <div class="sub">// WHAT I DID</div>
+      <ul>
+        <li>Built a virtual network with a Kali Linux attack machine and several intentionally vulnerable Linux and
+          Windows targets.</li>
+        <li>Worked through full attack scenarios following the stages of the <span class="hl2">Cyber Kill Chain</span>:
+          reconnaissance, weaponization, delivery, exploitation, installation, command &amp; control and actions on
+          objectives, using Kali's standard toolset.</li>
+        <li>Mapped each stage to where a defender could detect or break the chain, practicing offensive and
+          defensive thinking side by side.</li>
+        <li>Captured and analyzed network traffic in Wireshark to see what each attack looks like on the wire and
+          how a defender could detect it.</li>
+        <li>Wrote small Bash and PowerShell scripts to automate repetitive recon and enumeration tasks on Linux
+          and Windows.</li>
+        <li>Used AI agents to help automate parts of the workflow, such as organizing scan results and summarizing
+          findings into short reports.</li>
+      </ul>
+      <div class="pills">
+        <span class="pill c">Kali Linux</span><span class="pill c">Wireshark</span><span class="pill c">Pentesting</span>
+        <span class="pill c">Cyber Kill Chain</span><span class="pill c">Bash</span><span class="pill c">PowerShell</span>
+        <span class="pill c">Networking</span><span class="pill c">AI agents</span>
+      </div>
+    </article>
+
+    <article class="proj">
+      <div class="proj-head">
+        <h3>Pet Management App (.NET MAUI)</h3>
+        <span class="status live">IN PROGRESS</span>
+      </div>
+      <p>I'm developing a cross-platform pet management application in C# and .NET MAUI that helps owners stay on
+        top of their pets' daily care. I'm building it alongside a formal academic MAUI project, which lets me
+        apply what I learn in the course to a real product of my own.</p>
+      <div class="sub">// WHAT I DID</div>
+      <ul>
+        <li>Designed features for feeding schedules, vaccination tracking and care requirements for each pet.</li>
+        <li>Built a single codebase that runs across platforms using .NET MAUI.</li>
+        <li>Added an AI part to the app: AI agents that help manage each pet's care, such as building
+          personalized feeding and vaccination reminders and answering owners' care questions.</li>
+        <li>Applied secure programming habits throughout, such as validating user input and handling stored data
+          carefully.</li>
+      </ul>
+      <div class="pills">
+        <span class="pill c">C#</span><span class="pill c">.NET MAUI</span><span class="pill c">Cross-platform</span>
+        <span class="pill c">Secure programming</span><span class="pill c">AI agents</span>
+      </div>
+    </article>
+  </section>
+
+  <section class="panel" style="margin-top:24px">
+    <h2><span class="n">06</span>References</h2>
+    <p class="muted">Available upon request.</p>
+  </section>
+
+  <footer>
+    &lt;/&gt; Designed &amp; built by Ariel Feider · <a href="mailto:arik.feider@gmail.com">get in touch</a><br>
+    © <span id="yr">2026</span> Ariel Feider. All rights reserved.
+  </footer>
+</div>
+
+<script>
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  // reveal panels on scroll
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if(!e.isIntersecting) return;
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    });
+  }, {threshold: .1});
+  document.querySelectorAll('.panel').forEach(p => io.observe(p));
+
+  // matrix rain
+  const c = document.getElementById('matrix'), x = c.getContext('2d');
+  let cols, drops; const fs = 16, chars = "01アイウエオカキクケコABCDEF<>/{}#$";
+  function size(){ c.width = innerWidth; c.height = innerHeight; cols = Math.floor(c.width / fs); drops = Array(cols).fill(0).map(() => Math.random() * -50); }
+  size(); addEventListener('resize', size);
+  if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+    setInterval(() => {
+      x.fillStyle = 'rgba(5,7,13,.12)'; x.fillRect(0, 0, c.width, c.height);
+      x.fillStyle = '#00ffd0'; x.font = fs + 'px JetBrains Mono, monospace';
+      drops.forEach((d, k) => {
+        x.fillText(chars[Math.floor(Math.random() * chars.length)], k * fs, d * fs);
+        drops[k] = (d * fs > c.height && Math.random() > .975) ? 0 : d + 1;
+      });
+    }, 60);
+  }
+</script>
+</body>
+</html>
